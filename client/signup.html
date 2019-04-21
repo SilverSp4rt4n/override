@@ -1,0 +1,17 @@
+<div class="form-group">
+	<label for="username">Username:</label>
+	<input type="text" class="form-control" id="username" oninput="checkInput()" maxlength="24" style="width: 90%; max-width: 300px">
+</div>
+<div class="form-group">
+	<label for="email">Email:</label>
+	<input type="text" class="form-control" id="email" oninput="checkInput()" style="width: 90%; max-width: 300px">
+</div>
+<div class="form-group">
+	<label for="pwd">Password:</label>
+	<input type="password" class="form-control" id="pwd" oninput="checkInput()" maxlength="24" style="width: 90%; max-width: 300px">
+</div>
+<div class="form-group">
+	<label for="confirm-pwd">Confirm:</label>
+	<input type="password" class="form-control" id="confirm-pwd" oninput="checkInput()" maxlength="24" style="width: 90%; max-width: 300px" onkeydown="submitForm('signup')">
+</div>
+<button type="button" onclick="signup()" class="btn btn-primary">Sign Up</button>

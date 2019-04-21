@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<head>
+	<title>
+		Override Web Application
+	</title>
+	<!--Disable Web Caching-->
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="-1">
+	<meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+	<!--Make Page Mobile-Friendly-->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<!--Strap up Bootstrap -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<script src="js/jquery.min.js"></script>
+	<script src="js/popper.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<!--Include script which contains client-side functions for interacting with API-->
+	<script src="js/override.js"></script>
+</head>
+<body onload="saveHome()">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="/">The Override Network</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+		{% if username|length > 1 %}
+		<a class="navbar-brand" style="align-right" href="#">{{username}}</a>
+		{% endif %}
+		<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarColor02">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item">
+					<a class="nav-link" data-toggle="collapse" data-target="#navbarColor02" onclick="getHome()">Home</a>
+				</li>
+				{% if not loggedIn %}
+				<li class="nav-item">
+					<a class="nav-link" data-toggle="collapse" data-target="#navbarColor02" onclick="getLoginForm()" href="#">Login</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" data-toggle="collapse" data-target="#navbarColor02" onclick="getSignup()" href="#">Signup</a>
+				</li>
+				{% else %}
+				<li class="nav-item">
+					<a class="nav-link" data-toggle="collapse" data-target="#navbarColor02" href="#">Profile</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" data-toggle="collapse" data-target="#navbarColor02" onclick="logout()" href="#">Log Out</a>
+				</li>
+				{% endif %}
+			</ul>
+		</div>
+	</nav>
+	<div id="content" style="margin: 10px 5% 5% 5%">
+		{% include "home.html" %}
+	</div>
+</body>
