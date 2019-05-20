@@ -240,3 +240,34 @@ function getLoginForm(){
 function getSignup(){
 	getPage("signup.html");
 }
+function getRedBridge(){
+	getPage("redbridge.html");
+}
+
+function joinGame(){
+	var code = document.getElementById("gamecode").value
+	console.log(code)
+	var xhr = new XMLHttpRequest();
+	xhr.addEventListener("load",joinResults);
+	xhr.open("POST","/redbridge/join",true);
+	xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
+	xhr.send(JSON.stringify({"gamecode":code}));
+}
+
+function joinResults(){	
+	if(this.response.includes("-1:")){
+		var userInput = document.getElementById("gamecode");
+		userInput.classList.add("is-invalid");
+		feedback = document.createElement("DIV");
+		feedback.classList.add("invalid-feedback");
+		feedback.id = "Negative-Feedback";
+		feedback.innerHTML="Invalid Game Code";
+		if(userInput.parentNode.lastChild.id!="Negative-Feedback"){
+			userInput.parentNode.appendChild(feedback);
+		}
+	}else{
+		getPage("controller.html");
+		addJoyStick();
+		addJoyStick();
+	}
+}

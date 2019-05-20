@@ -77,6 +77,15 @@ def signup():
 		return "-99: Unable to create new user"
 	return "0: New user created."
 
+@app.route("/redbridge/join",methods=['POST'])
+def joinGame():
+	if not request.json:
+		abort(400)
+	data = request.get_json()
+	##Computing to check if game exists
+	#return "-1: Invalid Game Code"
+	return "0: OK"
+
 @app.route('/js/<path:path>')
 def retrieve_js(path):
     return send_from_directory('js',path)
