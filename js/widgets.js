@@ -1,3 +1,9 @@
+//Send controller widget state
+function sendState(widgetID,xValue,yValue){
+
+}
+
+//Joystick Widget
 var bigRadius = 0;
 var littleRadius = 0;
 
@@ -6,7 +12,7 @@ function addJoyStick(){
 	var jID = 0;
 	var canvasName = "joyStick" + jID;
 	bigRadius = document.body.clientWidth / 5;
-	littleRadius = document.body.clientWidth / 15;
+	littleRadius = document.body.clientWidth / 13;
 	while(typeof(document.getElementById(canvasName)) != 'undefined' && document.getElementById(canvasName) != null){
 		jID+=1;
 		canvasName = "joyStick" + jID;
@@ -59,12 +65,14 @@ function releaseJoyStick(element){
 	ctx.arc(canvas.width/2, canvas.height/2, littleRadius, 0, 2 * Math.PI);
 	ctx.fillStyle = "black";
 	ctx.fill();
+	sendCData(element.id,0.0,0.0);
 }
 
 function moveJoyStick(element,event){
 	var canvas = element;
 	var mouseX;
 	var mouseY;
+	var maxDist = bigRadius - littleRadius;
 	if(event.touches != null && event.touches.length>0){
 		var touchIndex = 0;
 		for(var i = 0; i < event.touches.length; i++){
@@ -80,14 +88,28 @@ function moveJoyStick(element,event){
 	}
 	var elementX = element.getBoundingClientRect().left;
 	var elementY = element.getBoundingClientRect().top
+	//Middle of canvas/big circle
+	var centerX = canvas.width / 2; //RELATIVE
+	var centerY = canvas.height / 2; //RELATIVE
+	var ctx = canvas.getContext("2d");
+	ctx = canvas.getContext("2d");
 	//Coordinates of the inner circle
 	var innerX = mouseX - elementX;
 	var innerY = mouseY - elementY;
-	//Middle of canvas/big circle
-	var centerX = canvas.width / 2;
-	var centerY = canvas.height / 2;	
-	var ctx = canvas.getContext("2d");
-	ctx = canvas.getContext("2d");
+	//Calculate unit vector from center
+	var magnitude = Math.sqrt((Math.pow(innerX,2) + Math.pow(innerY,2)));
+	var unitX = (innerX-centerX) / magnitude;
+	var unitY = (innerY-centerY) / magnitude;
+	var calcX = innerX-centerX;
+	var calcY = innerY-centerY;
+	var distance = Math.sqrt(Math.pow(calcX,2)+Math.pow(calcY,2))
+	while(distance > maxDist){
+		innerX -= unitX;
+		innerY -= unitY;
+		distance = Math.sqrt(Math.pow((innerX-centerX),2)+Math.pow((innerY-centerY),2))
+	}
+	
+
 	//Clear previous frame
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 	ctx.beginPath();
@@ -98,7 +120,8 @@ function moveJoyStick(element,event){
 	ctx.arc(innerX, innerY, littleRadius, 0, 2 * Math.PI);
 	ctx.fillStyle = "black";
 	ctx.fill();
-	var outputX = innerX - centerX;
-	var outputY = innerY - centerY;
+	var outputX = (innerX - centerX) / maxDist;
+	var outputY = (innerY - centerY) / maxDist;
+	console.log(outputX + ", " + outputY)
+	sendCData(element.id,outputX,outputY);
 }
-

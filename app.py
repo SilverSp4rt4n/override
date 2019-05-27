@@ -7,8 +7,11 @@ from schema import app
 from flask import Flask, abort, render_template
 from flask import request, session, send_from_directory
 from tools import *
+import packages.redBridge as redBridge
 
 #app = Flask(__name__)
+if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+	rb = redBridge.redBridge()
 
 @app.route('/')
 def landing():
@@ -79,12 +82,43 @@ def signup():
 
 @app.route("/redbridge/join",methods=['POST'])
 def joinGame():
+	global rb
 	if not request.json:
 		abort(400)
 	data = request.get_json()
 	##Computing to check if game exists
-	#return "-1: Invalid Game Code"
-	return "0: OK"
+	print("gamecode request: %s" % data["gamecode"])
+	if(data["gamecode"] in rb.gameRooms):
+		pID = rb.addPlayer(data["gamecode"],"Player")
+		schema = 0	
+		return "0 %s %s" % (pID,schema)
+	return "-1: Invalid Game Code"
+
+@app.route("/redbridge/sendcstate",methods=['POST'])
+def sendControllerState():
+	if not request.json:
+		abort(400)
+	data = request.get_json()
+
+@app.route("/redbridge/pingplayer",methods=['POST'])
+def updatePlayerStatus():
+	if not request.json:
+		abort(400)
+	data = request.get_json()
+	if "gamecode" not in data or "pid" not in data:
+		abort(400)
+	rb.updatePlayerActivity(data["gamecode"],int(data["pid"]))
+	return "0"
+
+@app.route("/redbridge/cdata",methods=['POST'])
+def sendCData():
+	if not request.json:
+		abort(400)
+	data = request.get_json()
+	if "gamecode" not in data or "pid" not in data or "xVal" not in data or "yVal" not in data or "wID" not in data:
+		abort(400)
+	result = rb.deliverCData(data["gamecode"],data["pid"],data["wID"],data["xVal"],data["yVal"])
+	return str(result)
 
 @app.route('/js/<path:path>')
 def retrieve_js(path):

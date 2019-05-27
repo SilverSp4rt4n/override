@@ -15,6 +15,8 @@
 	<script src="js/jquery.min.js"></script>
 	<script src="js/popper.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
+	<!--Script for general RedBridge functions-->
+	<script src="js/redbridge.js"></script>
 	<!--Script for RedBridge Controller Widgets-->
 	<script src="js/widgets.js"></script>
 	<!--Include script which contains client-side functions for interacting with API-->
@@ -45,12 +47,12 @@
 				<li class="nav-item">
 					<a class="nav-link" data-toggle="collapse" data-target="#navbarColor02" href="#">Profile</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" data-toggle="collapse" data-target="#navbarColor02" onclick="getRedBridge()" href="#">RedBridge</a>
-				<li class="nav-item">
 					<a class="nav-link" data-toggle="collapse" data-target="#navbarColor02" onclick="logout()" href="#">Log Out</a>
 				</li>
 				{% endif %}
+				<li class="nav-item">
+					<a class="nav-link" data-toggle="collapse" data-target="#navbarColor02" onclick="getRedBridge()" href="#">RedBridge</a>
+				<li class="nav-item">
 			</ul>
 		</div>
 	</nav>
