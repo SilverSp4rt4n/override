@@ -12,6 +12,18 @@ function joinGame(){
 	xhr.send(JSON.stringify({"gamecode":code}));
 }
 
+function processSchema(schema){
+	inputLines = schema.split("\n");
+	for (var i = 0; i < inputLines.length; i++){
+		if(inputLines[i] == "joystick") {
+			addJoyStick();
+		}
+		if(inputLines[i] == "button") {
+			addButton();
+		}
+	}
+}
+
 function joinResults(){	
 	if(this.response.includes("-1:")){
 		var userInput = document.getElementById("gamecode");
@@ -29,7 +41,8 @@ function joinResults(){
 		data = this.response.split(" ")
 		pID = data[1];
 		schema = data[2];
-		addJoyStick();
+		//Process schema
+		processSchema(schema);
 		window.setInterval(pingServer,5000);
 	}
 }

@@ -11,7 +11,7 @@ import packages.redBridge as redBridge
 
 #app = Flask(__name__)
 if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-	rb = redBridge.redBridge()
+	rb = redBridge.RedBridge()
 
 @app.route('/')
 def landing():
@@ -90,7 +90,7 @@ def joinGame():
 	print("gamecode request: %s" % data["gamecode"])
 	if(data["gamecode"] in rb.gameRooms):
 		pID = rb.addPlayer(data["gamecode"],"Player")
-		schema = 0	
+		schema = rb.getSchema(data["gamecode"], pID)	
 		return "0 %s %s" % (pID,schema)
 	return "-1: Invalid Game Code"
 

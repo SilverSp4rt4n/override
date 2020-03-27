@@ -1,8 +1,3 @@
-//Send controller widget state
-function sendState(widgetID,xValue,yValue){
-
-}
-
 //Joystick Widget
 var bigRadius = 0;
 var littleRadius = 0;
@@ -33,6 +28,10 @@ function addJoyStick(){
 	ctx.fill();
 	
 	document.getElementById("controllerSpace").appendChild(canvas);
+}
+
+function addButton() {
+
 }
 
 function grabJoyStick(element,event){
