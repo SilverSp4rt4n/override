@@ -174,11 +174,16 @@ class RedBridge:
 	def timeoutDaemon(self):
 		print("timeout daemon running.")
 		while True:
+			removeRooms = []
 			pins = self.gameRooms.keys()
 			try:
 				for pin in pins:
 					self.checkPlayerTimeout(pin)
-					self.checkDeadRooms(pin) #FIXME
+					removeRooms += self.checkDeadRoom(pin)
+				for room in removeRooms:
+					del self.gameRooms[room]
+					report("Game room %s deleted" % (room))
+
 			except Exception as e:
 				report(e)
 			time.sleep(10)
@@ -200,15 +205,14 @@ class RedBridge:
 		self.gameRooms[pin].checkPlayerTimeout()
 		return 0
 
-	def checkDeadRooms(self, pin):
+	def checkDeadRoom(self, pin):
 		remove = []
 		if pin not in self.gameRooms:
 			return -1
 		if(self.gameRooms[pin].isDead()):
 			remove.append(pin)
-
-		for pin in remove:
-			del self.gameRooms[pin]
+		
+		return remove
 
 	def updatePlayerActivity(self,pin,pID):
 		if pin not in self.gameRooms:	
