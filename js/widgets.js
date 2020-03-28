@@ -2,6 +2,7 @@
 var bigRadius = 0;
 var littleRadius = 0;
 
+
 function addJoyStick(){
 	var canvas = document.createElement("CANVAS");
 	var jID = 0;
@@ -15,8 +16,8 @@ function addJoyStick(){
 	canvas.setAttribute("id",canvasName);
 	canvas.setAttribute("onmousedown","grabJoyStick(this,event);");
 	canvas.setAttribute("ontouchstart","grabJoyStick(this,event);");
-	canvas.width = 2*(document.body.clientWidth / 5)
-	canvas.height = 2*(document.body.clientWidth / 5)
+	canvas.width = 2*(document.body.clientWidth / 5);
+	canvas.height = 2*(document.body.clientWidth / 5);
 	var ctx = canvas.getContext("2d");
 	ctx.beginPath();
 	ctx.arc(canvas.width/2, canvas.height/2, bigRadius, 0, 2 * Math.PI);
@@ -30,8 +31,27 @@ function addJoyStick(){
 	document.getElementById("controllerSpace").appendChild(canvas);
 }
 
-function addButton() {
-
+function addButton(name) {
+	var btn = document.createElement("BUTTON");
+	var bID = 0;
+	var btnName = "button" + bID;
+	while(typeof(document.getElementById(btnName)) != 'undefined' && document.getElementById(btnName) != null){
+		bID += 1;
+		canvasName = "button" + bID;
+	}
+	btn.setAttribute("id",btnName);
+	btn.setAttribute("class","btn btn-primary");
+	btn.setAttribute("onmousedown", "buttonPressed(this,event);");
+	btn.setAttribute("ontouchstart", "buttonPressed(this,event);");
+	btn.innerHTML = name;
+	var sizeCalculation = 2*(document.body.clientWidth/5)
+	btn.style.position = "relative";
+	btn.style.top = -1*(sizeCalculation/2).toString(10) + "px";
+	btn.style.left = "1vw";
+	btn.style.width = sizeCalculation.toString(10) + "px";
+	btn.style.height = sizeCalculation.toString(10) + "px";
+	btn.style.fontSize = "18vw";
+	document.getElementById("controllerSpace").appendChild(btn);
 }
 
 function grabJoyStick(element,event){
@@ -44,6 +64,22 @@ function grabJoyStick(element,event){
 		document.body.setAttribute("position","fixed");
 		document.body.setAttribute("overflow","hidden");
 	}
+}
+
+function buttonPressed(element, event){
+	element.setAttribute("ontouchend","buttonReleased(this, event);");
+	element.setAttribute("onmouseup","buttonReleased(this, event);");
+	//btn.setAttribute("onmousedown", "null");
+	//btn.setAttribute("ontouchstart", "null");
+	sendCData(element.id, 1.0, 1.0);
+}
+
+function buttonReleased(element, event){
+	btn.setAttribute("ontouchend","null");
+	btn.setAttribute("onmouseup","null");
+	//btn.setAttribute("onmousedown", "buttonPressed(this,event);");
+	//btn.setAttribute("ontouchstart", "buttonPressed(this,event);");
+	sendCData(element.id, 0.0, 0.0);
 }
 
 function releaseJoyStick(element){

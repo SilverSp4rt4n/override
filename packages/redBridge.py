@@ -30,7 +30,7 @@ class GameRoom:
 		self.gamecode = gamecode
 		self.socketObject = socketObject
 		self.players = {}
-		self.default_schema = "joystick\njoystick"
+		self.default_schema = ""
 		self.deadRoom = False
 		self.th_comm = threading.Thread(target=self.commThread)
 		self.th_comm.daemon = True
@@ -74,30 +74,40 @@ class GameRoom:
 			return -1
 		return 0
 
-	def checkPlayerTimeouts(self):
+	def checkPlayerTimeout(self):
+		global global_timeout
 		remove = []
 		for pID in self.players.keys():
-			inactiveTime = abs(round(time.time())-self.players[pid].lastActive)
+			inactiveTime = abs( round(time.time()) - self.players[pID].lastActive)
 			if inactiveTime > global_timeout:
-				report("Player timed out: gc %s pid %s" % (pin,pID))
+				report("Player timed out: gc %s pid %s" % (self.gamecode,pID))
 				self.sendMsg("PDISCONNECT %s\n" % (pID))
 				remove.append(pID)
 		for item in remove:
-			removePlayer(item)
+			self.removePlayer(item)
 			
-
-	def assignNewSchema(self, msg):
-		#break schema data into lines
+	def parseCommand(self, msg):
 		msgLines = msg.split("\n")
+		return msgLines
+
+	def assignNewSchema(self, cmd):
 		#retrieve player ID from schema data
-		pID = msgLines[0].split(" ")[1]
+		pID = cmd[1]
 		#remove pID and command information
-		del msgLines[0]
+		del cmd[0]
+		del cmd[1]
 		#Rejoin string and assign the schema to the appropriate player
-		msg = "\n".join(msgLines)
+		schema = "\n".join(cmd)
 		if(pID in self.players):
-			self.players[pID].schema = msg
-		report("New schema for player %d: %s" % (pID, msg))
+			self.players[pID].schema = schema
+		report("New schema for player %d: %s" % (pID, schema))
+
+	def assignDefaultSchema(self, cmd):
+		#Remove command
+		del cmd[0]
+		schema = "\n".join(cmd)
+		self.default_schema = schema
+		report("New default schema for gameroom %s: %s" % (self.gamecode, self.default_schema))
 
 	def getSchema(self, pid):
 		if(pid not in self.players):
@@ -120,15 +130,17 @@ class GameRoom:
 				msg = self.socketObject.recv(4096)
 				msg = msg.decode("utf-8")
 				if(len(msg)>0):
-					print(msg)
-					if("SCHEMA" in msg):
-						self.assignNewSchema(msg)			
+					cmd = self.parseCommand(msg)
+					if("PLAYER_SCHEMA" in cmd[0]):
+						self.assignNewSchema(cmd)
+					elif("DEFAULT_SCHEMA" in cmd[0]):
+						schema = self.assignDefaultSchema(cmd)			
 				else:
 					print("Received empty string. Closing Room...")
 					self.kill()
 					return
 			except Exception as e:
-				print(e)
+				report("%s: Closing Room %s" % (e, self.gamecode))
 				self.kill()
 				return #probably needs to be more than just this
 		
@@ -166,9 +178,9 @@ class RedBridge:
 			try:
 				for pin in pins:
 					self.checkPlayerTimeout(pin)
-					self.checkDeadRooms(pin)
-			except:
-				continue
+					self.checkDeadRooms(pin) #FIXME
+			except Exception as e:
+				report(e)
 			time.sleep(10)
 
 	def addPlayer(self,pin,name):
@@ -189,9 +201,13 @@ class RedBridge:
 		return 0
 
 	def checkDeadRooms(self, pin):
+		remove = []
 		if pin not in self.gameRooms:
 			return -1
 		if(self.gameRooms[pin].isDead()):
+			remove.append(pin)
+
+		for pin in remove:
 			del self.gameRooms[pin]
 
 	def updatePlayerActivity(self,pin,pID):
@@ -243,7 +259,7 @@ class RedBridge:
 				#th = threading.Thread(target=self.processClient,args=(clientSock,pin))
 				#th.daemon = True
 				#th.start()
-				self.gameRooms[pin].sendMsg("connected.\n")
+				self.gameRooms[pin].sendMsg("CONNECTED\n")
 			else:
 				clientSock.send(b"Error: Malformed Request")
 				clientSock.close()

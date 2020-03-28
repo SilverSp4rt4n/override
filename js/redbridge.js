@@ -18,8 +18,12 @@ function processSchema(schema){
 		if(inputLines[i] == "joystick") {
 			addJoyStick();
 		}
-		if(inputLines[i] == "button") {
-			addButton();
+		if(inputLines[i].includes("button")) {
+			console.log(inputLines)
+			var parts = inputLines[i].split(" ");
+			console.log(parts);
+			var btnLabel = parts[1]
+			addButton(btnLabel);
 		}
 	}
 }
@@ -38,9 +42,10 @@ function joinResults(){
 	}else{
 		getPage("controller.html");
 		console.log(this.response);
-		data = this.response.split(" ")
-		pID = data[1];
-		schema = data[2];
+		data = this.response
+		var firstSpace = data.indexOf(" ")
+		pID = data.substring(0,firstSpace);
+		schema = data.substring(data.indexOf(" ", firstSpace+1) +1);
 		//Process schema
 		processSchema(schema);
 		window.setInterval(pingServer,5000);
