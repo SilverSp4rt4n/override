@@ -41,11 +41,11 @@ function joinResults(){
 		}
 	}else{
 		getPage("controller.html");
-		console.log(this.response);
+		console.log("response: " + this.response);
 		data = this.response
 		var firstSpace = data.indexOf(" ")
 		pID = data.substring(0,firstSpace);
-		schema = data.substring(data.indexOf(" ", firstSpace+1) +1);
+		schema = data.substring(firstSpace+1);
 		//Process schema
 		processSchema(schema);
 		window.setInterval(pingServer,5000);

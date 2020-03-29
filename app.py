@@ -91,7 +91,7 @@ def joinGame():
 	if(data["gamecode"] in rb.gameRooms):
 		pID = rb.addPlayer(data["gamecode"],"Player")
 		schema = rb.getSchema(data["gamecode"], pID)	
-		return "0 %s %s" % (pID,schema)
+		return "%s %s" % (pID,schema)
 	return "-1: Invalid Game Code"
 
 @app.route("/redbridge/sendcstate",methods=['POST'])

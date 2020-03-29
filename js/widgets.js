@@ -37,11 +37,11 @@ function addButton(name) {
 	var btnName = "button" + bID;
 	while(typeof(document.getElementById(btnName)) != 'undefined' && document.getElementById(btnName) != null){
 		bID += 1;
-		canvasName = "button" + bID;
+		btnName = "button" + bID;
 	}
 	btn.setAttribute("id",btnName);
 	btn.setAttribute("class","btn btn-primary");
-	btn.setAttribute("onmousedown", "buttonPressed(this,event);");
+	//btn.setAttribute("onmousedown", "buttonPressed(this,event);");
 	btn.setAttribute("ontouchstart", "buttonPressed(this,event);");
 	btn.innerHTML = name;
 	var sizeCalculation = 2*(document.body.clientWidth/5)
